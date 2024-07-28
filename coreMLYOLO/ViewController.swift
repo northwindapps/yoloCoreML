@@ -66,7 +66,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         guard let ciImage = CIImage(image: image), let model = model else {
             fatalError("Unable to create CIImage from UIImage or model not loaded")
         }
-
+        
+        
         let handler = VNImageRequestHandler(ciImage: ciImage, options: [:])
         let request = VNCoreMLRequest(model: model) { request, error in
             if let error = error {
@@ -134,7 +135,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
 
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        
+        connection.videoOrientation = AVCaptureVideoOrientation.portrait
         let currentTime = Date()
         if currentTime.timeIntervalSince(lastPredictionTime) < 2.0 {
             return
