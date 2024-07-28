@@ -56,7 +56,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.frame = view.layer.bounds
         previewLayer.videoGravity = .resizeAspectFill
-        view.layer.addSublayer(previewLayer)
+        previewLayer.isHidden = true
+        //view.layer.addSublayer(previewLayer)
 
         captureSession.startRunning()
     }
@@ -82,61 +83,61 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
 
+
+    // Helper function to fix image orientation
+    func fixOrientation(img: UIImage) -> UIImage {
+        if img.imageOrientation == .up {
+            return img
+        }
+
+        UIGraphicsBeginImageContextWithOptions(img.size, false, img.scale)
+        img.draw(in: CGRect(origin: .zero, size: img.size))
+        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return normalizedImage ?? img
+    }
+
     func processResults(_ results: [Any]?, in image: UIImage) {
         guard let results = results as? [VNRecognizedObjectObservation] else {
             print("No results or results are of unexpected type")
             return
         }
 
-        DispatchQueue.main.async {
-            self.clearPreviousShapes()
+        // Fix the orientation of the image
+        let fixedImage = fixOrientation(img: image)
+        let imageSize = fixedImage.size
 
-            let imageSize = image.size
-            let imageViewSize = self.imageView.bounds.size
+        UIGraphicsBeginImageContextWithOptions(imageSize, false, 0.0)
+        fixedImage.draw(in: CGRect(origin: .zero, size: imageSize))
 
-            for observation in results {
-                let boundingBox = observation.boundingBox
-                let rect = CGRect(
-                    x: boundingBox.origin.x * imageViewSize.width,
-                    y: (1 - boundingBox.origin.y - boundingBox.height) * imageViewSize.height,
-                    width: boundingBox.width * imageViewSize.width,
-                    height: boundingBox.height * imageViewSize.height
-                )
+        for observation in results {
+            let boundingBox = observation.boundingBox
+            let rect = CGRect(
+                x: boundingBox.origin.x * imageSize.width,
+                y: (1 - boundingBox.origin.y - boundingBox.height) * imageSize.height,
+                width: boundingBox.width * imageSize.width,
+                height: boundingBox.height * imageSize.height
+            )
 
-                let shapeLayer = CAShapeLayer()
-                shapeLayer.path = UIBezierPath(rect: rect).cgPath
-                shapeLayer.strokeColor = UIColor.red.cgColor
-                shapeLayer.lineWidth = 2.0
-                shapeLayer.fillColor = UIColor.clear.cgColor
+            UIColor.red.setStroke()
+            UIRectFrame(rect)
 
-                self.imageView.layer.addSublayer(shapeLayer)
-                self.shapeLayers.append(shapeLayer)
-
-                if let label = observation.labels.first?.identifier {
-                    let textLayer = CATextLayer()
-                    textLayer.string = label
-                    textLayer.foregroundColor = UIColor.red.cgColor
-                    textLayer.fontSize = 14
-                    textLayer.frame = CGRect(x: rect.origin.x, y: rect.origin.y - 20, width: rect.size.width, height: 20)
-                    textLayer.contentsScale = UIScreen.main.scale
-                    self.imageView.layer.addSublayer(textLayer)
-                    self.textLayers.append(textLayer)
-                }
+            if let label = observation.labels.first?.identifier {
+                let textRect = CGRect(x: rect.origin.x, y: rect.origin.y - 20, width: rect.size.width, height: 20)
+                let text = NSAttributedString(string: label, attributes: [.foregroundColor: UIColor.red])
+                text.draw(in: textRect)
             }
         }
+
+        let annotatedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        DispatchQueue.main.async {
+            self.imageView.image = annotatedImage
+        }
     }
 
-    func clearPreviousShapes() {
-        for layer in shapeLayers {
-            layer.removeFromSuperlayer()
-        }
-        shapeLayers.removeAll()
-        
-        for layer in textLayers {
-            layer.removeFromSuperlayer()
-        }
-        textLayers.removeAll()
-    }
 
     func convertCIImageToUIImage(ciImage: CIImage) -> UIImage? {
         let context = CIContext(options: nil)
