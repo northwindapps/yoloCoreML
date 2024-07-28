@@ -137,7 +137,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         connection.videoOrientation = AVCaptureVideoOrientation.portrait
         let currentTime = Date()
-        if currentTime.timeIntervalSince(lastPredictionTime) < 2.0 {
+        if currentTime.timeIntervalSince(lastPredictionTime) < 1.0 {
             return
         }
         lastPredictionTime = currentTime
