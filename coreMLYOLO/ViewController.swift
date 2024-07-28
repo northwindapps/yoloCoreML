@@ -84,20 +84,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
 
 
-    // Helper function to fix image orientation
-    func fixOrientation(img: UIImage) -> UIImage {
-        if img.imageOrientation == .up {
-            return img
-        }
-
-        UIGraphicsBeginImageContextWithOptions(img.size, false, img.scale)
-        img.draw(in: CGRect(origin: .zero, size: img.size))
-        let normalizedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return normalizedImage ?? img
-    }
-
     func processResults(_ results: [Any]?, in image: UIImage) {
         guard let results = results as? [VNRecognizedObjectObservation] else {
             print("No results or results are of unexpected type")
@@ -105,7 +91,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
 
         // Fix the orientation of the image
-        let fixedImage = fixOrientation(img: image)
+        let fixedImage = image
         let imageSize = fixedImage.size
 
         UIGraphicsBeginImageContextWithOptions(imageSize, false, 0.0)
@@ -150,7 +136,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
         let currentTime = Date()
-        if currentTime.timeIntervalSince(lastPredictionTime) < 3.0 {
+        if currentTime.timeIntervalSince(lastPredictionTime) < 2.0 {
             return
         }
         lastPredictionTime = currentTime
