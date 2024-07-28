@@ -21,5 +21,7 @@
 			</array>
 		</dict>
 	</dict>
+    <key>NSCameraUsageDescription</key>
+    <string>This app requires camera access to capture photos for OCR processing.</string>
 </dict>
 </plist>

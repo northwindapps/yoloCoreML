@@ -13,6 +13,8 @@
 		2BC7943D2C5534A8003998C8 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 2BC7943C2C5534A8003998C8 /* Base */; };
 		2BC7943F2C5534AA003998C8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BC7943E2C5534AA003998C8 /* Assets.xcassets */; };
 		2BC794422C5534AA003998C8 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 2BC794412C5534AA003998C8 /* Base */; };
+		2BC794502C5551C9003998C8 /* billJP.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2BC7944F2C5551C9003998C8 /* billJP.jpg */; };
+		2BC794562C556C2E003998C8 /* best.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = 2BC794552C556C2E003998C8 /* best.mlpackage */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		2BC7943E2C5534AA003998C8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2BC794412C5534AA003998C8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2BC794432C5534AA003998C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		2BC7944F2C5551C9003998C8 /* billJP.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = billJP.jpg; sourceTree = "<group>"; };
+		2BC794552C556C2E003998C8 /* best.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = best.mlpackage; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +63,8 @@
 				2BC794352C5534A8003998C8 /* AppDelegate.swift */,
 				2BC794372C5534A8003998C8 /* SceneDelegate.swift */,
 				2BC794392C5534A8003998C8 /* ViewController.swift */,
+				2BC794552C556C2E003998C8 /* best.mlpackage */,
+				2BC7944F2C5551C9003998C8 /* billJP.jpg */,
 				2BC7943B2C5534A8003998C8 /* Main.storyboard */,
 				2BC7943E2C5534AA003998C8 /* Assets.xcassets */,
 				2BC794402C5534AA003998C8 /* LaunchScreen.storyboard */,
@@ -127,6 +133,7 @@
 			files = (
 				2BC7943F2C5534AA003998C8 /* Assets.xcassets in Resources */,
 				2BC794422C5534AA003998C8 /* Base in Resources */,
+				2BC794502C5551C9003998C8 /* billJP.jpg in Resources */,
 				2BC7943D2C5534A8003998C8 /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -141,6 +148,7 @@
 				2BC7943A2C5534A8003998C8 /* ViewController.swift in Sources */,
 				2BC794362C5534A8003998C8 /* AppDelegate.swift in Sources */,
 				2BC794382C5534A8003998C8 /* SceneDelegate.swift in Sources */,
+				2BC794562C556C2E003998C8 /* best.mlpackage in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
