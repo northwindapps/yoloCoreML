@@ -11,6 +11,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var shapeLayers: [CAShapeLayer] = []
     var textLayers: [CATextLayer] = []
     var lastPredictionTime: Date = Date()
+    var capturedImages:[UIImage] = []
+    var counter = 0
+    var maxLimit = 5
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -90,6 +93,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             print("No results or results are of unexpected type")
             return
         }
+        
+        if counter > maxLimit{
+            print("Reached the limit")
+            return
+        }
 
         // Fix the orientation of the image
         let fixedImage = image
@@ -98,6 +106,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         UIGraphicsBeginImageContextWithOptions(imageSize, false, 0.0)
         fixedImage.draw(in: CGRect(origin: .zero, size: imageSize))
 
+        //save image
+        //capturedImages.append(fixedImage)
         for observation in results {
             let boundingBox = observation.boundingBox
             let rect = CGRect(
@@ -109,21 +119,78 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 
             UIColor.red.setStroke()
             UIRectFrame(rect)
-
+            
+            //
+            // Convert UIImage to CGImage
+            guard let cgImage = fixedImage.cgImage else { return }
+            
+            // Crop the image using the rect
+            guard let croppedCGImage = cgImage.cropping(to: rect) else { return }
+            
+            // Convert cropped CGImage back to UIImage
+            let croppedImage = UIImage(cgImage: croppedCGImage)
+            //capturedImages.append(croppedImage)
+            
+            
             if let label = observation.labels.first?.identifier {
-                let textRect = CGRect(x: rect.origin.x, y: rect.origin.y - 20, width: rect.size.width, height: 20)
-                let text = NSAttributedString(string: label, attributes: [.foregroundColor: UIColor.red])
-                text.draw(in: textRect)
+                let image = croppedImage
+                performOCR(on: image) { recognizedText in
+                    if let text = recognizedText {
+                        print("Key:\(label),Value: \(text)")
+                        self.counter += 1
+                    } else {
+                        print("No text recognized")
+                    }
+                }
+            }
+
+            
+        }
+        
+    }
+
+    func performOCR(on image: UIImage, completion: @escaping ([String]?) -> Void) {
+        // Convert UIImage to CGImage
+        guard let cgImage = image.cgImage else {
+            completion(nil)
+            return
+        }
+
+        // Create a request for text recognition
+        let request = VNRecognizeTextRequest { (request, error) in
+            if let error = error {
+                print("Error during OCR: \(error)")
+                completion(nil)
+                return
+            }
+
+            // Extract recognized text
+            let recognizedStrings = request.results?.compactMap { result -> String? in
+                guard let observation = result as? VNRecognizedTextObservation else { return nil }
+                return observation.topCandidates(1).first?.string
+            }
+
+            completion(recognizedStrings)
+        }
+
+        // Set recognition level and language (optional)
+        request.recognitionLevel = .accurate // .accurate or .fast
+        request.recognitionLanguages = ["en-US"] // You can add more languages
+
+        // Create a request handler
+        let requestHandler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+
+        // Perform the request
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                try requestHandler.perform([request])
+            } catch {
+                print("Error performing OCR request: \(error)")
+                completion(nil)
             }
         }
-
-        let annotatedImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        DispatchQueue.main.async {
-            self.imageView.image = annotatedImage
-        }
     }
+
 
 
     func convertCIImageToUIImage(ciImage: CIImage) -> UIImage? {
@@ -151,10 +218,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             return
         }
         
-        DispatchQueue.main.async {
+//        Run prediction in background thread to avoid lag
+        DispatchQueue.global(qos: .userInitiated).async {
             self.predict(image: uiImage)
         }
-        
     }
 }
 
