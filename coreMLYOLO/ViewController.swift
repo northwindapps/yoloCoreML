@@ -12,6 +12,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var textLayers: [CATextLayer] = []
     var lastPredictionTime: Date = Date()
     var capturedImages:[UIImage] = []
+    var bottomLabel = UILabel()
+    var dateSlashes = [String]()
+    var totalValues = [String]()
+    var tvCoordinates = [CGRect]()
+    var totalLabelCoordinates = [CGRect]()
+    var shopNames = [String]()
     var counter = 0
     var maxLimit = 5
 
@@ -27,6 +33,56 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         imageView.contentMode = .scaleAspectFit
         imageView.layer.zPosition = 1
         view.addSubview(imageView)
+        
+        
+        // Create and configure the label
+        bottomLabel.text = "Processing..."
+        bottomLabel.textAlignment = .left
+        bottomLabel.textColor = .white
+        bottomLabel.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        bottomLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
+        bottomLabel.numberOfLines = 1
+        bottomLabel.layer.zPosition = 2
+        
+        // Set the frame for the label at the bottom
+        bottomLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(bottomLabel)
+        
+        // Add constraints for the label
+        NSLayoutConstraint.activate([
+            bottomLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            bottomLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            bottomLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            bottomLabel.heightAnchor.constraint(equalToConstant: 40)
+        ])
+        
+        // Create and configure the button
+        let actionButton = UIButton(type: .system)
+        actionButton.setTitle("Retry", for: .normal)
+        actionButton.setTitleColor(.white, for: .normal)
+        actionButton.backgroundColor = UIColor.systemBlue
+        actionButton.layer.cornerRadius = 8
+        actionButton.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+    
+        actionButton.layer.zPosition = 2
+        
+        // Set the frame for the button
+        actionButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(actionButton)
+        
+        // Add constraints for the button
+        NSLayoutConstraint.activate([
+            actionButton.centerXAnchor.constraint(equalTo: bottomLabel.rightAnchor, constant: -50),
+            actionButton.centerYAnchor.constraint(equalTo: bottomLabel.centerYAnchor),
+            actionButton.widthAnchor.constraint(equalToConstant: 100),
+            actionButton.heightAnchor.constraint(equalToConstant: 40)
+        ])
+    }
+    
+    @objc func buttonTapped() {
+        print("Button tapped!")
+        // Add your button action here
+        counter = 0
     }
 
     func loadModel() {
@@ -96,6 +152,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         if counter > maxLimit{
             print("Reached the limit")
+//            performOCR(on: image) { recognizedText in
+//                if let text = recognizedText {
+//                    print("Image: \(text)")
+//                } else {
+//                    print("No text recognized")
+//                }
+//            }
             return
         }
 
@@ -131,22 +194,53 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let croppedImage = UIImage(cgImage: croppedCGImage)
             //capturedImages.append(croppedImage)
             
-            
             if let label = observation.labels.first?.identifier {
                 let image = croppedImage
                 performOCR(on: image) { recognizedText in
                     if let text = recognizedText {
                         print("Key:\(label),Value: \(text)")
+                        if label == "tv"{
+                            let filteredString = self.filterDigits(inputString: text.first ?? "")
+                            if Double(filteredString) != nil{
+                                self.totalValues.append(text.first!)
+                            }
+                        }
+                        if label == "datesla"{
+                            if self.filterDateWithSlashFormat(inputString: text.first ?? ""){
+                                self.dateSlashes.append(text.first!)
+                            }
+                        }
                         self.counter += 1
                     } else {
                         print("No text recognized")
                     }
                 }
             }
-
-            
         }
-        
+    }
+    
+    func filterDigits(inputString:String)->String{
+        let pattern = "[0-9.]+"
+        if let regex = try? NSRegularExpression(pattern: pattern) {
+            let matches = regex.matches(in: inputString, range: NSRange(inputString.startIndex..., in: inputString))
+            let numbers = matches.map { match -> String in
+                let range = Range(match.range, in: inputString)!
+                return String(inputString[range])
+            }
+            print(numbers) // Output: ["123.45", "01.01.2025"]
+            return numbers.first ?? ""
+        }
+        return ""
+    }
+    
+    func filterDateWithSlashFormat(inputString:String)->Bool{
+        let numArys = inputString.components(separatedBy: "/")
+        if numArys.count == 3{
+            if Double(numArys[0]) != nil && Double(numArys[1]) != nil && Double(numArys[2]) != nil{
+                return true
+            }
+        }
+        return false
     }
 
     func performOCR(on image: UIImage, completion: @escaping ([String]?) -> Void) {
@@ -221,6 +315,17 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 //        Run prediction in background thread to avoid lag
         DispatchQueue.global(qos: .userInitiated).async {
             self.predict(image: uiImage)
+            let dateText = self.dateSlashes.first ?? "no date"
+            var totalText = self.totalValues.first ?? "no total"
+            for (i,each) in self.totalValues.enumerated(){
+                if each.contains("$"){
+                    totalText = each
+                }
+            }
+            // Update UI on the main thread
+            DispatchQueue.main.async {
+                self.bottomLabel.text = "\(dateText) \(totalText)"
+            }
         }
     }
 }

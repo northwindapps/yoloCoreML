@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B968F2E2D367D7B00242FAC /* _total_date_en_best.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2B968F2D2D367D7B00242FAC /* _total_date_en_best.mlmodel */; };
+		2B968F302D368A9100242FAC /* best.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2B968F2F2D368A9100242FAC /* best.mlmodel */; };
 		2BABCD7C2D3408300070D7BB /* _total_best.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BABCD7B2D3408300070D7BB /* _total_best.mlmodel */; };
 		2BC794362C5534A8003998C8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC794352C5534A8003998C8 /* AppDelegate.swift */; };
 		2BC794382C5534A8003998C8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC794372C5534A8003998C8 /* SceneDelegate.swift */; };
@@ -17,10 +19,11 @@
 		2BC794502C5551C9003998C8 /* billJP.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2BC7944F2C5551C9003998C8 /* billJP.jpg */; };
 		2BE639D72D3505CA00AC5F28 /* _total_date_best.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BE639D62D3505CA00AC5F28 /* _total_date_best.mlmodel */; };
 		2BE639D92D35085D00AC5F28 /* _total_date2_best.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BE639D82D35085D00AC5F28 /* _total_date2_best.mlmodel */; };
-		2BE639DB2D3530BD00AC5F28 /* best.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BE639DA2D3530BD00AC5F28 /* best.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2B968F2D2D367D7B00242FAC /* _total_date_en_best.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = _total_date_en_best.mlmodel; sourceTree = "<group>"; };
+		2B968F2F2D368A9100242FAC /* best.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = best.mlmodel; sourceTree = "<group>"; };
 		2BABCD7B2D3408300070D7BB /* _total_best.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = _total_best.mlmodel; sourceTree = "<group>"; };
 		2BC794322C5534A8003998C8 /* coreMLYOLO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = coreMLYOLO.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BC794352C5534A8003998C8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -33,7 +36,6 @@
 		2BC7944F2C5551C9003998C8 /* billJP.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = billJP.jpg; sourceTree = "<group>"; };
 		2BE639D62D3505CA00AC5F28 /* _total_date_best.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = _total_date_best.mlmodel; sourceTree = "<group>"; };
 		2BE639D82D35085D00AC5F28 /* _total_date2_best.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = _total_date2_best.mlmodel; sourceTree = "<group>"; };
-		2BE639DA2D3530BD00AC5F28 /* best.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = best.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,8 +78,9 @@
 				2BC794432C5534AA003998C8 /* Info.plist */,
 				2BABCD7B2D3408300070D7BB /* _total_best.mlmodel */,
 				2BE639D62D3505CA00AC5F28 /* _total_date_best.mlmodel */,
+				2B968F2D2D367D7B00242FAC /* _total_date_en_best.mlmodel */,
 				2BE639D82D35085D00AC5F28 /* _total_date2_best.mlmodel */,
-				2BE639DA2D3530BD00AC5F28 /* best.mlmodel */,
+				2B968F2F2D368A9100242FAC /* best.mlmodel */,
 			);
 			path = coreMLYOLO;
 			sourceTree = "<group>";
@@ -157,9 +160,10 @@
 				2BABCD7C2D3408300070D7BB /* _total_best.mlmodel in Sources */,
 				2BC7943A2C5534A8003998C8 /* ViewController.swift in Sources */,
 				2BC794362C5534A8003998C8 /* AppDelegate.swift in Sources */,
+				2B968F2E2D367D7B00242FAC /* _total_date_en_best.mlmodel in Sources */,
 				2BE639D72D3505CA00AC5F28 /* _total_date_best.mlmodel in Sources */,
 				2BC794382C5534A8003998C8 /* SceneDelegate.swift in Sources */,
-				2BE639DB2D3530BD00AC5F28 /* best.mlmodel in Sources */,
+				2B968F302D368A9100242FAC /* best.mlmodel in Sources */,
 				2BE639D92D35085D00AC5F28 /* _total_date2_best.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
