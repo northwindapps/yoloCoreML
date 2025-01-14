@@ -13,12 +13,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var lastPredictionTime: Date = Date()
     var capturedImages:[UIImage] = []
     var bottomLabel = UILabel()
+    var actionButton = UIButton(type: .system)
     var dateSlashes = [String]()
     var totalValues = [String]()
     var tvCoordinates = [CGRect]()
     var totalLabelCoordinates = [CGRect]()
     var shopNames = [String]()
-    var counter = 0
+    var counter = 5
     var maxLimit = 5
 
     override func viewDidLoad() {
@@ -36,7 +37,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         
         // Create and configure the label
-        bottomLabel.text = "Processing..."
+        bottomLabel.text = "Ready to go.."
         bottomLabel.textAlignment = .left
         bottomLabel.textColor = .white
         bottomLabel.backgroundColor = UIColor.black.withAlphaComponent(0.5)
@@ -57,8 +58,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         ])
         
         // Create and configure the button
-        let actionButton = UIButton(type: .system)
-        actionButton.setTitle("Retry", for: .normal)
+        actionButton.setTitle("Scan", for: .normal)
         actionButton.setTitleColor(.white, for: .normal)
         actionButton.backgroundColor = UIColor.systemBlue
         actionButton.layer.cornerRadius = 8
@@ -81,6 +81,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     
     @objc func buttonTapped() {
         print("Button tapped!")
+        actionButton.setTitle("Scanning...", for: .normal)
         // Add your button action here
         counter = 0
     }
@@ -234,10 +235,20 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     func filterDateWithSlashFormat(inputString:String)->Bool{
-        let numArys = inputString.components(separatedBy: "/")
-        if numArys.count == 3{
-            if Double(numArys[0]) != nil && Double(numArys[1]) != nil && Double(numArys[2]) != nil{
-                return true
+        if inputString.contains("/"){
+            let numArys = inputString.components(separatedBy: "/")
+            if numArys.count == 3{
+                if Double(numArys[0]) != nil && Double(numArys[1]) != nil && Double(numArys[2]) != nil{
+                    return true
+                }
+            }
+        }
+        if inputString.contains("-"){
+            let numArys = inputString.components(separatedBy: "-")
+            if numArys.count == 3{
+                if Double(numArys[0]) != nil && Double(numArys[1]) != nil && Double(numArys[2]) != nil{
+                    return true
+                }
             }
         }
         return false
@@ -325,6 +336,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             // Update UI on the main thread
             DispatchQueue.main.async {
                 self.bottomLabel.text = "\(dateText) \(totalText)"
+                if self.maxLimit > self.counter{
+                    self.actionButton.setTitle("Retry", for: .normal)
+                }
             }
         }
     }
