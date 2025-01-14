@@ -82,6 +82,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @objc func buttonTapped() {
         print("Button tapped!")
         actionButton.setTitle("Scanning...", for: .normal)
+        totalValues.removeAll()
+        dateSlashes.removeAll()
+        
         // Add your button action here
         counter = 0
     }
@@ -335,7 +338,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             // Update UI on the main thread
             DispatchQueue.main.async {
-                self.bottomLabel.text = "\(dateText) \(totalText)"
+                self.bottomLabel.text = "\(dateText) \(",") \(totalText)"
                 if self.maxLimit > self.counter{
                     self.actionButton.setTitle("Retry", for: .normal)
                 }
