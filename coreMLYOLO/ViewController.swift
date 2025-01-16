@@ -425,18 +425,26 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     func filterDateWithSlashFormat(inputString:String)->Bool{
         if inputString.contains("/"){
             let numArys = inputString.components(separatedBy: "/")
-            if numArys.count > 2{
-//                if Double(numArys[0]) != nil && Double(numArys[1]) != nil && Double(numberOnlyString(text: numArys[2])) != nil{
+            if numArys.count > 1{
+                if Double(numberOnlyString(text: numArys.last!)) != nil{
                     return true
-//                }
+                }
             }
         }
         if inputString.contains("-"){
             let numArys = inputString.components(separatedBy: "-")
-            if numArys.count > 2{
-//                if Double(numArys[0]) != nil && Double(numArys[1]) != nil && Double(numberOnlyString(text: numArys[2])) != nil{
+            if numArys.count > 1{
+                if  Double(numberOnlyString(text: numArys.last!)) != nil{
                     return true
-//                }
+                }
+            }
+        }
+        if inputString.contains("'"){
+            let numArys = inputString.components(separatedBy: "'")
+            if numArys.count > 1{
+                if  Double(numberOnlyString(text: numArys.last!)) != nil{
+                    return true
+                }
             }
         }
         return false
