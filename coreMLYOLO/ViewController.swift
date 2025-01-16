@@ -156,48 +156,26 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         
         if counter > maxLimit{
             print("Reached the limit")
-//            performOCR(on: image) { recognizedText in
-//                if let text = recognizedText {
-//                    print("Image: \(text)")
-//                } else {
-//                    print("No text recognized")
-//                }
-//            }
             return
         }
 
-        // Fix the orientation of the image
-        let fixedImage = image
-        let imageSize = fixedImage.size
-
-        UIGraphicsBeginImageContextWithOptions(imageSize, false, 0.0)
-        fixedImage.draw(in: CGRect(origin: .zero, size: imageSize))
-
         //save image
-        //capturedImages.append(fixedImage)
         for observation in results {
             let boundingBox = observation.boundingBox
             let rect = CGRect(
-                x: boundingBox.origin.x * imageSize.width,
-                y: (1 - boundingBox.origin.y - boundingBox.height) * imageSize.height,
-                width: boundingBox.width * imageSize.width,
-                height: boundingBox.height * imageSize.height
+                x: boundingBox.origin.x * image.size.width,
+                y: (1 - boundingBox.origin.y - boundingBox.height) * image.size.height,
+                width: boundingBox.width * image.size.width,
+                height: boundingBox.height * image.size.height
             )
-
-            UIColor.red.setStroke()
-            UIRectFrame(rect)
-            
-            //
             // Convert UIImage to CGImage
-            guard let cgImage = fixedImage.cgImage else { return }
+            guard let cgImage = image.cgImage else { return }
             
             // Crop the image using the rect
             guard let croppedCGImage = cgImage.cropping(to: rect) else { return }
             
             // Convert cropped CGImage back to UIImage
             let croppedImage = UIImage(cgImage: croppedCGImage)
-            //capturedImages.append(croppedImage)
-            
             if let label = observation.labels.first?.identifier {
                 let image = croppedImage
                 performOCR(on: image) { recognizedText in
@@ -326,11 +304,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             return
         }
         
-//        Run prediction in background thread to avoid lag
+        //Run prediction in background thread to avoid lag
         DispatchQueue.global(qos: .userInitiated).async {
             self.predict(image: uiImage)
             let dateText = self.dateSlashes.first ?? "no date"
             var totalText = self.totalValues.first ?? "no total"
+            //TODO need more logic
             for (i,each) in self.totalValues.enumerated(){
                 if each.contains("$"){
                     totalText = each
