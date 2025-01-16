@@ -8,7 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		2B2BD6E92D38054A000FF3C0 /* shop_name.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2B2BD6E82D38054A000FF3C0 /* shop_name.mlmodel */; };
-		2B968F302D368A9100242FAC /* total_date.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2B968F2F2D368A9100242FAC /* total_date.mlmodel */; };
+		2B968F302D368A9100242FAC /* _total_date.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2B968F2F2D368A9100242FAC /* _total_date.mlmodel */; };
+		2BAEAD932D394DFB008180DB /* total.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BAEAD922D394DFB008180DB /* total.mlmodel */; };
+		2BAEAD952D396A7C008180DB /* 50_date.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BAEAD942D396A7C008180DB /* 50_date.mlmodel */; };
+		2BAEAD972D396D38008180DB /* date.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BAEAD962D396D38008180DB /* date.mlmodel */; };
 		2BC794362C5534A8003998C8 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC794352C5534A8003998C8 /* AppDelegate.swift */; };
 		2BC794382C5534A8003998C8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC794372C5534A8003998C8 /* SceneDelegate.swift */; };
 		2BC7943A2C5534A8003998C8 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC794392C5534A8003998C8 /* ViewController.swift */; };
@@ -20,7 +23,10 @@
 
 /* Begin PBXFileReference section */
 		2B2BD6E82D38054A000FF3C0 /* shop_name.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = shop_name.mlmodel; sourceTree = "<group>"; };
-		2B968F2F2D368A9100242FAC /* total_date.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = total_date.mlmodel; sourceTree = "<group>"; };
+		2B968F2F2D368A9100242FAC /* _total_date.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = _total_date.mlmodel; sourceTree = "<group>"; };
+		2BAEAD922D394DFB008180DB /* total.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = total.mlmodel; sourceTree = "<group>"; };
+		2BAEAD942D396A7C008180DB /* 50_date.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = 50_date.mlmodel; sourceTree = "<group>"; };
+		2BAEAD962D396D38008180DB /* date.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = date.mlmodel; sourceTree = "<group>"; };
 		2BC794322C5534A8003998C8 /* coreMLYOLO.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = coreMLYOLO.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2BC794352C5534A8003998C8 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2BC794372C5534A8003998C8 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -70,8 +76,11 @@
 				2BC7943E2C5534AA003998C8 /* Assets.xcassets */,
 				2BC794402C5534AA003998C8 /* LaunchScreen.storyboard */,
 				2BC794432C5534AA003998C8 /* Info.plist */,
-				2B968F2F2D368A9100242FAC /* total_date.mlmodel */,
+				2B968F2F2D368A9100242FAC /* _total_date.mlmodel */,
 				2B2BD6E82D38054A000FF3C0 /* shop_name.mlmodel */,
+				2BAEAD922D394DFB008180DB /* total.mlmodel */,
+				2BAEAD942D396A7C008180DB /* 50_date.mlmodel */,
+				2BAEAD962D396D38008180DB /* date.mlmodel */,
 			);
 			path = coreMLYOLO;
 			sourceTree = "<group>";
@@ -150,9 +159,12 @@
 			files = (
 				2BC7943A2C5534A8003998C8 /* ViewController.swift in Sources */,
 				2BC794362C5534A8003998C8 /* AppDelegate.swift in Sources */,
+				2BAEAD932D394DFB008180DB /* total.mlmodel in Sources */,
 				2BC794382C5534A8003998C8 /* SceneDelegate.swift in Sources */,
-				2B968F302D368A9100242FAC /* total_date.mlmodel in Sources */,
+				2B968F302D368A9100242FAC /* _total_date.mlmodel in Sources */,
 				2B2BD6E92D38054A000FF3C0 /* shop_name.mlmodel in Sources */,
+				2BAEAD952D396A7C008180DB /* 50_date.mlmodel in Sources */,
+				2BAEAD972D396D38008180DB /* date.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
