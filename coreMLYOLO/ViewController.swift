@@ -7,6 +7,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     var model: VNCoreMLModel?
+    var model2: VNCoreMLModel?
     var imageView: UIImageView!
     var shapeLayers: [CAShapeLayer] = []
     var textLayers: [CATextLayer] = []
@@ -16,10 +17,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var actionButton = UIButton(type: .system)
     var dateSlashes = [String]()
     var totalValues = [String]()
+    var shopNames = [String]()
     var tvCoordinates = [CGRect]()
     var totalLabelCoordinates = [CGRect]()
-    var shopNames = [String]()
     var counter = 5
+    var counter2 = 5
     var maxLimit = 5
 
     override func viewDidLoad() {
@@ -84,18 +86,26 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         actionButton.setTitle("Scanning...", for: .normal)
         totalValues.removeAll()
         dateSlashes.removeAll()
+        shopNames.removeAll()
         
         // Add your button action here
         counter = 0
+        counter2 = 0
     }
 
     func loadModel() {
         do {
-            guard let modelURL = Bundle.main.url(forResource: "best", withExtension: "mlmodelc") else {
+            guard let modelURL = Bundle.main.url(forResource: "shop_name", withExtension: "mlmodelc") else {
                 fatalError("Failed to find the model file.")
             }
             let coreMLModel = try MLModel(contentsOf: modelURL)
             self.model = try VNCoreMLModel(for: coreMLModel)
+            //
+            guard let modelURL2 = Bundle.main.url(forResource: "total_date", withExtension: "mlmodelc") else {
+                fatalError("Failed to find the model file.")
+            }
+            let coreMLModel2 = try MLModel(contentsOf: modelURL2)
+            self.model2 = try VNCoreMLModel(for: coreMLModel2)
         } catch {
             fatalError("Failed to load model: \(error.localizedDescription)")
         }
@@ -126,11 +136,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
 
     func predict(image: UIImage) {
-        guard let ciImage = CIImage(image: image), let model = model else {
+        guard let ciImage = CIImage(image: image), let model = model, let model2 = model2 else {
             fatalError("Unable to create CIImage from UIImage or model not loaded")
         }
-        
-        
         let handler = VNImageRequestHandler(ciImage: ciImage, options: [:])
         let request = VNCoreMLRequest(model: model) { request, error in
             if let error = error {
@@ -139,9 +147,21 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             self.processResults(request.results, in: image)
         }
-
         do {
             try handler.perform([request])
+        } catch {
+            print("Failed to perform request: \(error.localizedDescription)")
+        }
+        //
+        let request2 = VNCoreMLRequest(model: model2) { request2, error in
+            if let error = error {
+                print("Failed to perform request: \(error.localizedDescription)")
+                return
+            }
+            self.processResults2(request2.results, in: image)
+        }
+        do {
+            try handler.perform([request2])
         } catch {
             print("Failed to perform request: \(error.localizedDescription)")
         }
@@ -180,7 +200,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 let image = croppedImage
                 performOCR(on: image) { recognizedText in
                     if let text = recognizedText {
-                        print("Key:\(label),Value: \(text)")
+                        print("Key1:\(label),Value: \(text)")
                         if label == "tv"{
                             let filteredString = self.filterDigits(inputString: text.first ?? "")
                             if Double(filteredString) != nil{
@@ -192,7 +212,72 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                                 self.dateSlashes.append(text.first!)
                             }
                         }
+                        if label == "shop"{
+                            let filteredString = text.first ?? ""
+                            if filteredString != ""{
+                                self.shopNames.append(text.first!)
+                            }
+                            
+                        }
                         self.counter += 1
+                    } else {
+                        print("No text recognized")
+                    }
+                }
+            }
+        }
+    }
+    func processResults2(_ results: [Any]?, in image: UIImage) {
+        guard let results = results as? [VNRecognizedObjectObservation] else {
+            print("No results or results are of unexpected type")
+            return
+        }
+        
+        if counter2 > maxLimit{
+            print("Reached the limit")
+            return
+        }
+
+        //save image
+        for observation in results {
+            let boundingBox = observation.boundingBox
+            let rect = CGRect(
+                x: boundingBox.origin.x * image.size.width,
+                y: (1 - boundingBox.origin.y - boundingBox.height) * image.size.height,
+                width: boundingBox.width * image.size.width,
+                height: boundingBox.height * image.size.height
+            )
+            // Convert UIImage to CGImage
+            guard let cgImage = image.cgImage else { return }
+            
+            // Crop the image using the rect
+            guard let croppedCGImage = cgImage.cropping(to: rect) else { return }
+            
+            // Convert cropped CGImage back to UIImage
+            let croppedImage = UIImage(cgImage: croppedCGImage)
+            if let label = observation.labels.first?.identifier {
+                let image = croppedImage
+                performOCR(on: image) { recognizedText in
+                    if let text = recognizedText {
+                        if label == "tv"{
+                            let filteredString = self.filterDigits(inputString: text.first ?? "")
+                            if Double(filteredString) != nil{
+                                self.totalValues.append(text.first!)
+                            }
+                        }
+                        if label == "datesla"{
+                            if self.filterDateWithSlashFormat(inputString: text.first ?? ""){
+                                self.dateSlashes.append(text.first!)
+                            }
+                        }
+                        print("Key2:\(label),Value: \(text)")
+                        if label == "shop"{
+                            let filteredString = text.first ?? ""
+                            if filteredString != ""{
+                                self.shopNames.append(text.first!)
+                            }
+                        }
+                        self.counter2 += 1
                     } else {
                         print("No text recognized")
                     }
@@ -215,11 +300,16 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         return ""
     }
     
+    func numberOnlyString(text: String) -> String {
+       let numChars = Set("1234567890")
+       return text.filter {numChars.contains($0) }
+    }
+    
     func filterDateWithSlashFormat(inputString:String)->Bool{
         if inputString.contains("/"){
             let numArys = inputString.components(separatedBy: "/")
             if numArys.count == 3{
-                if Double(numArys[0]) != nil && Double(numArys[1]) != nil && Double(numArys[2]) != nil{
+                if Double(numArys[0]) != nil && Double(numArys[1]) != nil && Double(numberOnlyString(text: numArys[2])) != nil{
                     return true
                 }
             }
@@ -227,7 +317,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         if inputString.contains("-"){
             let numArys = inputString.components(separatedBy: "-")
             if numArys.count == 3{
-                if Double(numArys[0]) != nil && Double(numArys[1]) != nil && Double(numArys[2]) != nil{
+                if Double(numArys[0]) != nil && Double(numArys[1]) != nil && Double(numberOnlyString(text: numArys[2])) != nil{
                     return true
                 }
             }
@@ -307,6 +397,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         //Run prediction in background thread to avoid lag
         DispatchQueue.global(qos: .userInitiated).async {
             self.predict(image: uiImage)
+            let shopText = self.shopNames.first ?? "no shop"
             let dateText = self.dateSlashes.first ?? "no date"
             var totalText = self.totalValues.first ?? "no total"
             //TODO need more logic
@@ -317,7 +408,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             // Update UI on the main thread
             DispatchQueue.main.async {
-                self.bottomLabel.text = "\(dateText) \(",") \(totalText)"
+                self.bottomLabel.text = "\(shopText) \(",") \(dateText) \(",") \(totalText)"
                 if self.maxLimit > self.counter{
                     self.actionButton.setTitle("Retry", for: .normal)
                 }
