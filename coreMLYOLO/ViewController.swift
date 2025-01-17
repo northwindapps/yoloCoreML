@@ -26,6 +26,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var counter2 = 5
     var counter3 = 5
     var maxLimit = 5
+    var Menuview:Menu!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -49,6 +50,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         bottomLabel.font = UIFont.systemFont(ofSize: 16, weight: .medium)
         bottomLabel.numberOfLines = 1
         bottomLabel.layer.zPosition = 2
+        bottomLabel.isUserInteractionEnabled = true
         
         // Set the frame for the label at the bottom
         bottomLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -61,6 +63,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             bottomLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             bottomLabel.heightAnchor.constraint(equalToConstant: 40)
         ])
+        // Step 3: Add the tap gesture recognizer
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(labelTapped))
+        bottomLabel.addGestureRecognizer(tapGesture)
         
         // Create and configure the button
         actionButton.setTitle("Scan", for: .normal)
@@ -96,6 +101,115 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         counter = 0
         counter2 = 0
         counter3 = 0
+    }
+    
+    @objc func labelTapped() {
+        let mergedPool = self.datePool + self.shopPool + self.totalPool
+        print("Label tapped!")
+        //showMenu
+        if Menuview != nil{
+            if self.view.subviews.contains(Menuview){
+                Menuview.removeFromSuperview()
+            }else{
+                Menuview = Menu(frame: CGRect(x:Int(5),y:Int(self.view.frame.height - 600), width: 300,height: 500))
+                self.view.addSubview(Menuview)
+            }
+        }else{
+            Menuview = Menu(frame: CGRect(x:Int(5),y:Int(self.view.frame.height - 600), width: 300,height: 500))
+//            Menuview.hintCloseButton.addTarget(self, action: #selector(ViewController.closeHview), for: UIControl.Event.touchUpInside)
+            
+            self.view.addSubview(Menuview)
+        }
+        //
+        Menuview.backgroundColor = UIColor.white.withAlphaComponent(0.5)
+        Menuview.backgroundColor = UIColor.white.withAlphaComponent(0.5)
+
+        let shopText = self.shopNames.first ?? "no shop"
+        let dateText = self.dateSlashes.first ?? "no date"
+        var totalText = self.totalValues.first ?? "no total"
+        // Create the input fields
+        for i in 0..<3 {
+            let textField = UITextField(frame: CGRect(x: 10, y: 20 + i * 60, width: 280, height: 20))
+            if i == 0{
+                textField.placeholder = "date" // Placeholder text
+                textField.text = dateText
+            }
+            if i == 1{
+                textField.placeholder = "shop" // Placeholder text
+                textField.text = shopText
+            }
+            if i == 2{
+                textField.placeholder = "total" // Placeholder text
+                textField.text = totalText
+            }
+            
+            textField.borderStyle = .roundedRect // Add rounded corners
+            textField.backgroundColor = .white // Set background color
+            textField.textColor = .black // Set text color
+            textField.font = UIFont.systemFont(ofSize: 16) // Set font size
+            textField.clearButtonMode = .whileEditing // Add clear button
+            Menuview.addSubview(textField) // Add the text field to the menu
+        }
+        
+        // Create the UICollectionView layout
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.itemSize = CGSize(width: 80, height: 20)
+        layout.minimumLineSpacing = 10
+        layout.minimumInteritemSpacing = 10
+        // Create the UICollectionView
+        let collectionView = UICollectionView(frame: CGRect(x: 10, y: 200, width: 280, height: 150), collectionViewLayout: layout)
+        collectionView.register(CustomCollectionViewCell.self, forCellWithReuseIdentifier: "CustomCell")
+        collectionView.backgroundColor = UIColor.clear
+        collectionView.dataSource = self
+        collectionView.delegate = self
+
+        Menuview.addSubview(collectionView)
+
+//        // Create the button
+//        let button = UIButton(frame: CGRect(x: 10, y: 420, width: 280, height: 50))
+//        button.setTitle("Submit", for: .normal)
+//        button.backgroundColor = UIColor.systemBlue
+//        button.setTitleColor(.white, for: .normal)
+//        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
+//        button.layer.cornerRadius = 8 // Rounded corners
+//        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+//
+//        Menuview.addSubview(button) // Add the button to the menu
+//        self.view.addSubview(Menuview)
+        // Button titles and actions
+        let buttonTitles = ["Submit", "Cancel", "Reset"]
+        let buttonColors: [UIColor] = [.white, .white, .white]
+        let buttonActions: [Selector] = [#selector(submitTapped), #selector(cancelTapped), #selector(resetTapped)]
+
+        // Loop to create three buttons
+        for (index, title) in buttonTitles.enumerated() {
+            let button = UIButton(frame: CGRect(x: 10 + index * 95, // Adjust x position for each button
+                                                y: 420,
+                                                width: 90, // Width of each button
+                                                height: 50))
+            button.setTitle(title, for: .normal)
+            button.backgroundColor = buttonColors[index] // Set color based on index
+            button.setTitleColor(.white, for: .normal)
+            button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+            button.layer.cornerRadius = 8
+            button.addTarget(self, action: buttonActions[index], for: .touchUpInside)
+            Menuview.addSubview(button) // Add each button to the menu
+        }
+
+        self.view.addSubview(Menuview)
+    }
+    
+    @objc func submitTapped() {
+        print("Submit button tapped")
+    }
+
+    @objc func cancelTapped() {
+        print("Cancel button tapped")
+    }
+
+    @objc func resetTapped() {
+        print("Reset button tapped")
     }
 
     func loadModel() {
@@ -488,4 +602,68 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
 }
+extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return (self.datePool.count + self.shopPool.count + self.totalPool.count) // Number of items in the collection view
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CustomCell", for: indexPath) as? CustomCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+        
+        // Determine which array the current index belongs to
+        if indexPath.row < self.datePool.count {
+            // Get item from datePool
+            cell.label.text = "d: " + self.datePool[indexPath.row]
+        } else if indexPath.row < self.datePool.count + self.shopPool.count {
+            // Get item from shopPool
+            let shopIndex = indexPath.row - self.datePool.count
+            cell.label.text = "s: " + self.shopPool[shopIndex]
+        } else {
+            // Get item from totalPool
+            let totalIndex = indexPath.row - self.datePool.count - self.shopPool.count
+            cell.label.text = "t: " + self.totalPool[totalIndex]
+        }
+
+        cell.label.numberOfLines = 2
+        cell.label.tag = indexPath.row
+        cell.backgroundColor = UIColor.white // Set the cell background color
+        cell.layer.cornerRadius = 8 // Add rounded corners to the cells
+        cell.label.font = UIFont.systemFont(ofSize: 10.0)
+        return cell
+    }
+}
+class CustomCollectionViewCell: UICollectionViewCell {
+    let label: UILabel = {
+        let lbl = UILabel()
+        lbl.textColor = .black
+        lbl.font = UIFont.systemFont(ofSize: 14)
+        lbl.textAlignment = .center
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        return lbl
+    }()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        contentView.addSubview(label)
+        
+        // Add constraints to center the label within the cell
+        NSLayoutConstraint.activate([
+            label.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            label.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, constant: -10),
+            label.heightAnchor.constraint(equalToConstant: 20)
+        ])
+        
+        contentView.layer.cornerRadius = 8
+        contentView.layer.masksToBounds = true
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}
+
 
