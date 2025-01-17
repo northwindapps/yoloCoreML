@@ -18,9 +18,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var actionButton = UIButton(type: .system)
     var dateSlashes = [String]()
     var totalValues = [String]()
-    var totalLabelLocation = [CGRect]()
-    var totalValueLocation = [CGRect]()
     var shopNames = [String]()
+    var totalPool = [String]()
+    var datePool = [String]()
+    var shopPool = [String]()
     var counter = 5
     var counter2 = 5
     var counter3 = 5
@@ -90,8 +91,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         dateSlashes.removeAll()
         shopNames.removeAll()
         actionButton.isEnabled = false
-        totalLabelLocation.removeAll()
-        totalValueLocation.removeAll()
         
         // Add your button action here
         counter = 0
@@ -237,7 +236,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                             if label == "shop"{
                                 let filteredString = text.first ?? ""
                                 if filteredString != ""{
-                                    self.shopNames.append(text.first!)
+                                    if (self.shopNames.firstIndex(of: text.first!) == nil){
+                                        self.shopNames.append(text.first!)
+                                        self.shopPool.append(text.first!)
+                                    }
                                 }
                             }
 //                            self.counter += 1
@@ -278,32 +280,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                     performOCR(on: image) { recognizedText in
                         if let text = recognizedText {
                             print("Key2:\(label),Value: \(text)")
-                            if label == "totals"{
-                                self.totalLabelLocation.append(rect)
-                            }
-                            if label == "tv"{
-                                let filteredString = self.filterDigits(inputString: text.first ?? "")
-                                if Double(filteredString) != nil{
-                                    self.totalValues.append(text.first!)
-                                    self.totalValueLocation.append(rect)
-                                }
-                            }
                             if label == "totalPair"{
                                 let filteredString = self.filterDigits(inputString: text.last ?? "")
                                 if Double(filteredString) != nil{
-                                    self.totalValues.append(self.numberOnlyString(text: text.last!))
-                                    self.totalValueLocation.append(rect)
-                                }
-                            }
-                            if label == "datesla"{
-                                if self.filterDateWithSlashFormat(inputString: text.first ?? ""){
-                                    self.dateSlashes.append(text.first!)
-                                }
-                            }
-                            if label == "shop"{
-                                let filteredString = text.first ?? ""
-                                if filteredString != ""{
-                                    self.shopNames.append(text.first!)
+                                    if (self.totalValues.firstIndex(of: self.numberOnlyString(text: text.last!)) == nil){
+                                        self.totalValues.append(self.numberOnlyString(text: text.last!))
+                                        self.totalPool.append(self.numberOnlyString(text: text.last!))
+                                    }
                                 }
                             }
 //                            self.counter2 += 1
@@ -315,23 +298,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
         }
         self.counter2 = maxLimit + 1
-        //checking tv
-//        var diffY = 1000.0
-//        var targetIdx = -1
-//        if self.totalLabelLocation.count > 0{
-//            for (i,each) in totalValueLocation.enumerated() {
-//                let newDiff = abs(each.origin.y-totalLabelLocation.first!.origin.y)
-//                if newDiff < diffY{
-//                    diffY = newDiff
-//                    targetIdx = i
-//                }
-//            }
-//            if targetIdx != -1 {
-//                self.totalValues.insert(self.totalValues[targetIdx], at: 0)
-//            }
-//        }
-        
-
     }
     func processResults3(_ results: [Any]?, in image: UIImage) {
         guard let results = results as? [VNRecognizedObjectObservation] else {
@@ -361,26 +327,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                     performOCR(on: image) { recognizedText in
                         if let text = recognizedText {
                             print("Key3:\(label),Value: \(text)")
-                            if label == "totals"{
-                                self.totalLabelLocation.append(rect)
-                            }
-                            if label == "tv"{
-                                let filteredString = self.filterDigits(inputString: text.first ?? "")
-                                if Double(filteredString) != nil{
-                                    self.totalValues.append(text.first!)
-                                    self.totalValueLocation.append(rect)
-                                }
-                            }
-                            if label == "totalPair"{
-                                let filteredString = self.filterDigits(inputString: text.last ?? "")
-                                if Double(filteredString) != nil{
-                                    self.totalValues.append(self.numberOnlyString(text: text.last!))
-                                    self.totalValueLocation.append(rect)
-                                }
-                            }
                             if label == "datestr"{
                                 if self.filterDateWithSlashFormat(inputString: text.first ?? ""){
-                                    self.dateSlashes.append(text.first!)
+                                    if (self.dateSlashes.firstIndex(of: text.first!) == nil){
+                                        self.dateSlashes.append(text.first!)
+                                        self.datePool.append(text.first!)
+                                    }
                                 }
                             }
 //                            self.counter2 += 1
