@@ -27,6 +27,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var counter3 = 5
     var maxLimit = 5
     var Menuview:Menu!
+    var textFields = [UITextField]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -127,9 +128,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         let shopText = self.shopNames.first ?? "no shop"
         let dateText = self.dateSlashes.first ?? "no date"
         var totalText = self.totalValues.first ?? "no total"
+        textFields = []
         // Create the input fields
         for i in 0..<3 {
             let textField = UITextField(frame: CGRect(x: 10, y: 20 + i * 60, width: 280, height: 20))
+            textFields.append(textField)
             if i == 0{
                 textField.placeholder = "date" // Placeholder text
                 textField.text = dateText
@@ -163,6 +166,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         collectionView.backgroundColor = UIColor.clear
         collectionView.dataSource = self
         collectionView.delegate = self
+        collectionView.reloadData()
 
         Menuview.addSubview(collectionView)
 
@@ -187,10 +191,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             let button = UIButton(frame: CGRect(x: 10 + index * 95, // Adjust x position for each button
                                                 y: 420,
                                                 width: 90, // Width of each button
-                                                height: 50))
+                                                height: 20))
             button.setTitle(title, for: .normal)
             button.backgroundColor = buttonColors[index] // Set color based on index
-            button.setTitleColor(.white, for: .normal)
+            button.setTitleColor(.black, for: .normal)
             button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
             button.layer.cornerRadius = 8
             button.addTarget(self, action: buttonActions[index], for: .touchUpInside)
@@ -632,7 +636,25 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
         cell.backgroundColor = UIColor.white // Set the cell background color
         cell.layer.cornerRadius = 8 // Add rounded corners to the cells
         cell.label.font = UIFont.systemFont(ofSize: 10.0)
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(celllabelTapped(_:)))
+            cell.label.isUserInteractionEnabled = true // Make sure interaction is enabled
+            cell.label.addGestureRecognizer(tapGesture)
         return cell
+    }
+    @objc func celllabelTapped(_ sender: UITapGestureRecognizer) {
+        if let label = sender.view as? UILabel {
+            print("Label tapped: \(label.text ?? "No text")")
+            // Handle the tap action here
+            if label.text!.contains("d:"){
+                textFields[0].text = label.text!
+            }
+            if label.text!.contains("s:"){
+                textFields[1].text = label.text!
+            }
+            if label.text!.contains("t:"){
+                textFields[2].text = label.text!
+            }
+        }
     }
 }
 class CustomCollectionViewCell: UICollectionViewCell {
