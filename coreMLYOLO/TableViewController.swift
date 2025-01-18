@@ -1,11 +1,13 @@
 import UIKit
+import MessageUI
 
-class TableViewController: UIViewController {
+class TableViewController: UIViewController,MFMailComposeViewControllerDelegate {
     let tableView = UITableView()
     let buttonContainer = UIView()
     let button1 = UIButton(type: .system)
     let button2 = UIButton(type: .system)
     var repoDictionary = [[String: String]]()
+    var data: Data?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -100,6 +102,33 @@ class TableViewController: UIViewController {
     
     @objc func button2Tapped() {
         print("Button 2 tapped")
+        csvEmail()
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true)
+    }
+    
+    @objc func csvEmail() {
+        if MFMailComposeViewController.canSendMail() {
+            let today: Date = Date()
+            let dateFormatter: DateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "MM-dd-yyyy HH:mm"
+            let date = dateFormatter.string(from: today)
+            let mail = MFMailComposeViewController()
+            mail.mailComposeDelegate = self
+            mail.setSubject("from TotalTracker")
+            var csvString = "date,shop,total\n" // Header row
+            for entry in repoDictionary {
+                if let date = entry["date"], let shop = entry["shop"], let total = entry["total"] {
+                    let row = "\(date),\(shop),\(total)\n"
+                    csvString.append(row)
+                }
+            }
+            data = csvString.data(using: .utf8)
+            mail.addAttachmentData(data!, mimeType: "text/csv", fileName: date + ".csv")
+            present(mail, animated: true, completion: nil)
+        }
     }
 }
 
