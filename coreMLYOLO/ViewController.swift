@@ -182,20 +182,21 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 //        Menuview.addSubview(button) // Add the button to the menu
 //        self.view.addSubview(Menuview)
         // Button titles and actions
-        let buttonTitles = ["Submit", "Cancel", "Reset"]
-        let buttonColors: [UIColor] = [.white, .white, .white]
-        let buttonActions: [Selector] = [#selector(submitTapped), #selector(cancelTapped), #selector(resetTapped)]
+        let buttonTitles = ["Save", "Cancel","Email"]
+        let buttonColors: [UIColor] = [.systemBlue, .white, .white]
+        let buttonTitleColors: [UIColor] = [.white, .black, .black]
+        let buttonActions: [Selector] = [#selector(saveTapped), #selector(cancelTapped), #selector(emailTapped)]
 
         // Loop to create three buttons
         for (index, title) in buttonTitles.enumerated() {
-            let button = UIButton(frame: CGRect(x: 10 + index * 95, // Adjust x position for each button
+            let button = UIButton(frame: CGRect(x: 10 + index * 70, // Adjust x position for each button
                                                 y: 420,
-                                                width: 90, // Width of each button
+                                                width: 60, // Width of each button
                                                 height: 20))
             button.setTitle(title, for: .normal)
             button.backgroundColor = buttonColors[index] // Set color based on index
-            button.setTitleColor(.black, for: .normal)
-            button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+            button.setTitleColor(buttonTitleColors[index], for: .normal)
+            button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 10)
             button.layer.cornerRadius = 8
             button.addTarget(self, action: buttonActions[index], for: .touchUpInside)
             Menuview.addSubview(button) // Add each button to the menu
@@ -204,16 +205,30 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         self.view.addSubview(Menuview)
     }
     
-    @objc func submitTapped() {
+    @objc func saveTapped() {
         print("Submit button tapped")
+        totalValues.removeAll()
+        dateSlashes.removeAll()
+        shopNames.removeAll()
+        totalPool.removeAll()
+        datePool.removeAll()
+        shopPool.removeAll()
+        
     }
 
     @objc func cancelTapped() {
         print("Cancel button tapped")
+        if Menuview != nil{
+            Menuview.removeFromSuperview()
+        }
     }
 
     @objc func resetTapped() {
         print("Reset button tapped")
+    }
+    
+    @objc func emailTapped() {
+        print("Table button tapped")
     }
 
     func loadModel() {
@@ -646,13 +661,13 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegate {
             print("Label tapped: \(label.text ?? "No text")")
             // Handle the tap action here
             if label.text!.contains("d:"){
-                textFields[0].text = label.text!
+                textFields[0].text = label.text?.replacingOccurrences(of: "d: ", with: "")
             }
             if label.text!.contains("s:"){
-                textFields[1].text = label.text!
+                textFields[1].text = label.text?.replacingOccurrences(of: "s: ", with: "")
             }
             if label.text!.contains("t:"){
-                textFields[2].text = label.text!
+                textFields[2].text = label.text?.replacingOccurrences(of: "t: ", with: "")
             }
         }
     }
