@@ -38,8 +38,13 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        let appd : AppDelegate = UIApplication.shared.delegate as! AppDelegate
         super.viewDidAppear(animated)
-        askToLoadData()
+        if appd.isFirstLoad {
+            askToLoadData()
+            appd.isFirstLoad = false
+        }
+        
     }
 
     func setupUI() {
@@ -68,7 +73,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             bottomLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             bottomLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             bottomLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-            bottomLabel.heightAnchor.constraint(equalToConstant: 40)
+            bottomLabel.heightAnchor.constraint(equalToConstant: 60)
         ])
         // Step 3: Add the tap gesture recognizer
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(labelTapped))
@@ -92,13 +97,17 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             actionButton.centerXAnchor.constraint(equalTo: bottomLabel.rightAnchor, constant: -50),
             actionButton.centerYAnchor.constraint(equalTo: bottomLabel.centerYAnchor),
             actionButton.widthAnchor.constraint(equalToConstant: 100),
-            actionButton.heightAnchor.constraint(equalToConstant: 40)
+            actionButton.heightAnchor.constraint(equalToConstant: 30)
         ])
     }
     
     func askToLoadData() {
         // Check if there is saved data
         if let savedArray = UserDefaults.standard.array(forKey: "repoDictionary") as? [[String: String]] {
+            if savedArray.count == 0{
+                UserDefaults.standard.removeObject(forKey: "repoDictionary")
+                return
+            }
             // Create an alert controller
             let alert = UIAlertController(
                 title: "Load Data",
@@ -143,6 +152,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @objc func labelTapped() {
         let mergedPool = self.datePool + self.shopPool + self.totalPool
         print("Label tapped!")
+        textFields = []
         //showMenu
         if Menuview != nil{
             if self.view.subviews.contains(Menuview){
@@ -161,13 +171,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         Menuview.backgroundColor = UIColor.white.withAlphaComponent(0.5)
         Menuview.backgroundColor = UIColor.white.withAlphaComponent(0.5)
 
-        let shopText = self.shopNames.first ?? "no shop"
-        let dateText = self.dateSlashes.first ?? "no date"
-        var totalText = self.totalValues.first ?? "no total"
-        textFields = []
+        let shopText = self.shopNames.first ?? ""
+        let dateText = self.dateSlashes.first ?? ""
+        let totalText = self.totalValues.first ?? ""
         // Create the input fields
         for i in 0..<3 {
-            let textField = UITextField(frame: CGRect(x: 10, y: 20 + i * 60, width: 280, height: 20))
+            let textField = UITextField(frame: CGRect(x: 10, y: 20 + i * 60, width: 280, height: 40))
             textFields.append(textField)
             if i == 0{
                 textField.placeholder = "date" // Placeholder text
@@ -205,18 +214,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         collectionView.reloadData()
 
         Menuview.addSubview(collectionView)
-
-//        // Create the button
-//        let button = UIButton(frame: CGRect(x: 10, y: 420, width: 280, height: 50))
-//        button.setTitle("Submit", for: .normal)
-//        button.backgroundColor = UIColor.systemBlue
-//        button.setTitleColor(.white, for: .normal)
-//        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18)
-//        button.layer.cornerRadius = 8 // Rounded corners
-//        button.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
-//
-//        Menuview.addSubview(button) // Add the button to the menu
-//        self.view.addSubview(Menuview)
         // Button titles and actions
         let buttonTitles = ["Save", "Cancel","Table"]
         let buttonColors: [UIColor] = [.systemBlue, .white, .white]
@@ -242,6 +239,9 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     }
     
     @objc func saveTapped() {
+        if textFields[0].text! == "" || textFields[1].text! == "" || textFields[2].text! == ""{
+            return
+        }
         print("Submit button tapped")
         totalValues.removeAll()
         dateSlashes.removeAll()
@@ -258,11 +258,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             "total": total!
         ]
         repoDictionary.append(newEntry)
+        print("repoDictionary",repoDictionary)
         UserDefaults.standard.set(repoDictionary, forKey: "repoDictionary")
-        textFields = []
-        if Menuview != nil{
-            Menuview.removeFromSuperview()
-        }
+        textFields[0].text = ""
+        textFields[1].text = ""
+        textFields[2].text = ""
+
     }
 
     @objc func cancelTapped() {
@@ -279,7 +280,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     @objc func tableTapped() {
         print("Table button tapped")
         let targetViewController = self.storyboard!.instantiateViewController( withIdentifier: "tableview" ) as! TableViewController//Landscape
-        targetViewController.repoDictionary = repoDictionary
+        targetViewController.repoDictionary = self.repoDictionary
         targetViewController.modalPresentationStyle = .fullScreen
         self.present( targetViewController, animated: true, completion: nil)
     }

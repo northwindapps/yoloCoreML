@@ -95,8 +95,9 @@ class TableViewController: UIViewController,MFMailComposeViewControllerDelegate 
     
     @objc func button1Tapped() {
         print("Button 1 tapped")
-        let targetViewController = self.storyboard!.instantiateViewController( withIdentifier: "scanview" )//Landscape
+        let targetViewController = self.storyboard!.instantiateViewController( withIdentifier: "scanview" ) as! ViewController//Landscape
         targetViewController.modalPresentationStyle = .fullScreen
+        targetViewController.repoDictionary = self.repoDictionary
         self.present( targetViewController, animated: true, completion: nil)
     }
     
@@ -117,7 +118,7 @@ class TableViewController: UIViewController,MFMailComposeViewControllerDelegate 
             let date = dateFormatter.string(from: today)
             let mail = MFMailComposeViewController()
             mail.mailComposeDelegate = self
-            mail.setSubject("from TotalTracker")
+            mail.setSubject("from Total Tracker")
             var csvString = "date,shop,total\n" // Header row
             for entry in repoDictionary {
                 if let date = entry["date"], let shop = entry["shop"], let total = entry["total"] {
@@ -156,10 +157,11 @@ extension TableViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Remove the data from your data source
-            // Example: remove the item from your array
             self.repoDictionary.remove(at: indexPath.row)
             UserDefaults.standard.set(repoDictionary, forKey: "repoDictionary")
+            if self.repoDictionary.count == 0{
+                UserDefaults.standard.removeObject(forKey: "repoDictionary")
+            }
             // Delete the row from the table view
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
