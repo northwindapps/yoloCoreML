@@ -11,6 +11,7 @@
 		2B94971F2D3A872D00F5B99F /* menu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B94971E2D3A872D00F5B99F /* menu.xib */; };
 		2B9497212D3A8AD100F5B99F /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B9497202D3A8AD100F5B99F /* Menu.swift */; };
 		2B968F302D368A9100242FAC /* _total_date.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2B968F2F2D368A9100242FAC /* _total_date.mlmodel */; };
+		2BA80CD72D3BA3780060B4B8 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BA80CD62D3BA3780060B4B8 /* TableViewController.swift */; };
 		2BAEAD932D394DFB008180DB /* total.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BAEAD922D394DFB008180DB /* total.mlmodel */; };
 		2BAEAD952D396A7C008180DB /* 50_date.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BAEAD942D396A7C008180DB /* 50_date.mlmodel */; };
 		2BAEAD972D396D38008180DB /* date.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BAEAD962D396D38008180DB /* date.mlmodel */; };
@@ -28,6 +29,7 @@
 		2B94971E2D3A872D00F5B99F /* menu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = menu.xib; sourceTree = "<group>"; };
 		2B9497202D3A8AD100F5B99F /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		2B968F2F2D368A9100242FAC /* _total_date.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = _total_date.mlmodel; sourceTree = "<group>"; };
+		2BA80CD62D3BA3780060B4B8 /* TableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
 		2BAEAD922D394DFB008180DB /* total.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = total.mlmodel; sourceTree = "<group>"; };
 		2BAEAD942D396A7C008180DB /* 50_date.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = 50_date.mlmodel; sourceTree = "<group>"; };
 		2BAEAD962D396D38008180DB /* date.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = date.mlmodel; sourceTree = "<group>"; };
@@ -75,6 +77,7 @@
 				2BC794352C5534A8003998C8 /* AppDelegate.swift */,
 				2BC794372C5534A8003998C8 /* SceneDelegate.swift */,
 				2BC794392C5534A8003998C8 /* ViewController.swift */,
+				2BA80CD62D3BA3780060B4B8 /* TableViewController.swift */,
 				2BC7944F2C5551C9003998C8 /* billJP.jpg */,
 				2BC7943B2C5534A8003998C8 /* Main.storyboard */,
 				2BC7943E2C5534AA003998C8 /* Assets.xcassets */,
@@ -167,6 +170,7 @@
 				2BC7943A2C5534A8003998C8 /* ViewController.swift in Sources */,
 				2BC794362C5534A8003998C8 /* AppDelegate.swift in Sources */,
 				2BAEAD932D394DFB008180DB /* total.mlmodel in Sources */,
+				2BA80CD72D3BA3780060B4B8 /* TableViewController.swift in Sources */,
 				2BC794382C5534A8003998C8 /* SceneDelegate.swift in Sources */,
 				2B968F302D368A9100242FAC /* _total_date.mlmodel in Sources */,
 				2B2BD6E92D38054A000FF3C0 /* shop_name.mlmodel in Sources */,

@@ -28,12 +28,18 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var maxLimit = 5
     var Menuview:Menu!
     var textFields = [UITextField]()
+    var repoDictionary = [[String: String]]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         loadModel()
         setupCamera()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        askToLoadData()
     }
 
     func setupUI() {
@@ -89,6 +95,36 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             actionButton.heightAnchor.constraint(equalToConstant: 40)
         ])
     }
+    
+    func askToLoadData() {
+        // Check if there is saved data
+        if let savedArray = UserDefaults.standard.array(forKey: "repoDictionary") as? [[String: String]] {
+            // Create an alert controller
+            let alert = UIAlertController(
+                title: "Load Data",
+                message: "Do you want to load the saved data?",
+                preferredStyle: .alert
+            )
+            
+            // Add "Load" action
+            alert.addAction(UIAlertAction(title: "Load", style: .default, handler: { _ in
+                self.repoDictionary = savedArray
+                print("Data loaded: \(self.repoDictionary)")
+            }))
+            
+            // Add "Cancel" action
+            alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: { _ in
+                print("Load canceled")
+            }))
+            
+            // Present the alert
+            self.present(alert, animated: true)
+            
+        } else {
+            print("No saved data to load.")
+        }
+    }
+
     
     @objc func buttonTapped() {
         print("Button tapped!")
@@ -182,10 +218,10 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 //        Menuview.addSubview(button) // Add the button to the menu
 //        self.view.addSubview(Menuview)
         // Button titles and actions
-        let buttonTitles = ["Save", "Cancel","Email"]
+        let buttonTitles = ["Save", "Cancel","Table"]
         let buttonColors: [UIColor] = [.systemBlue, .white, .white]
         let buttonTitleColors: [UIColor] = [.white, .black, .black]
-        let buttonActions: [Selector] = [#selector(saveTapped), #selector(cancelTapped), #selector(emailTapped)]
+        let buttonActions: [Selector] = [#selector(saveTapped), #selector(cancelTapped), #selector(tableTapped)]
 
         // Loop to create three buttons
         for (index, title) in buttonTitles.enumerated() {
@@ -213,7 +249,20 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         totalPool.removeAll()
         datePool.removeAll()
         shopPool.removeAll()
-        
+        let date = textFields[0].text
+        let shop = textFields[1].text
+        let total = textFields[2].text
+        let newEntry: [String: String] = [
+            "date": date!,
+            "shop": shop!,
+            "total": total!
+        ]
+        repoDictionary.append(newEntry)
+        UserDefaults.standard.set(repoDictionary, forKey: "repoDictionary")
+        textFields = []
+        if Menuview != nil{
+            Menuview.removeFromSuperview()
+        }
     }
 
     @objc func cancelTapped() {
@@ -227,8 +276,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         print("Reset button tapped")
     }
     
-    @objc func emailTapped() {
+    @objc func tableTapped() {
         print("Table button tapped")
+        let targetViewController = self.storyboard!.instantiateViewController( withIdentifier: "tableview" ) as! TableViewController//Landscape
+        targetViewController.repoDictionary = repoDictionary
+        targetViewController.modalPresentationStyle = .fullScreen
+        self.present( targetViewController, animated: true, completion: nil)
     }
 
     func loadModel() {
@@ -275,7 +328,6 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.isHidden = false
         view.layer.addSublayer(previewLayer)
-
         captureSession.startRunning()
     }
 
@@ -609,7 +661,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             self.predict(image: uiImage)
             let shopText = self.shopNames.first ?? "no shop"
             let dateText = self.dateSlashes.first ?? "no date"
-            var totalText = self.totalValues.first ?? "no total"
+            let totalText = self.totalValues.first ?? "no total"
             // Update UI on the main thread
             DispatchQueue.main.async {
                 self.bottomLabel.text = "\(shopText) \(",") \(dateText) \(",") \(totalText)"
