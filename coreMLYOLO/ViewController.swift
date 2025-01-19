@@ -585,6 +585,18 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
                 }
             }
         }
+        if inputString.contains(" "){
+            let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
+            var containsMonth = false
+            for month in months {
+                if inputString.range(of: month, options: .caseInsensitive) != nil {
+                    containsMonth = true
+                    break
+                }
+            }
+            return containsMonth
+        }
         return false
     }
 
