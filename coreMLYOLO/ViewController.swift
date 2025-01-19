@@ -3,7 +3,7 @@ import Vision
 import UIKit
 import AVFoundation
 
-class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate {
+class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDelegate,UITextFieldDelegate {
     var captureSession: AVCaptureSession!
     var previewLayer: AVCaptureVideoPreviewLayer!
     var model: VNCoreMLModel?
@@ -196,6 +196,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             textField.textColor = .black // Set text color
             textField.font = UIFont.systemFont(ofSize: 16) // Set font size
             textField.clearButtonMode = .whileEditing // Add clear button
+            textField.delegate = self
             Menuview.addSubview(textField) // Add the text field to the menu
         }
         
@@ -236,6 +237,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
 
         self.view.addSubview(Menuview)
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder() // Dismiss the keyboard
+        return true
     }
     
     @objc func saveTapped() {
