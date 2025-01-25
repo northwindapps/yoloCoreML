@@ -9,11 +9,12 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var model: VNCoreMLModel?
     var model2: VNCoreMLModel?
     var model3: VNCoreMLModel?
+    var model4: VNCoreMLModel?
     var imageView: UIImageView!
     var shapeLayers: [CAShapeLayer] = []
     var textLayers: [CATextLayer] = []
     var lastPredictionTime: Date = Date()
-    var capturedImages:[UIImage] = []
+    var capturedImage = UIImage()
     var bottomLabel = UILabel()
     var actionButton = UIButton(type: .system)
     var dateSlashes = [String]()
@@ -25,6 +26,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
     var counter = 5
     var counter2 = 5
     var counter3 = 5
+    var counter4 = 5
     var maxLimit = 5
     var Menuview:Menu!
     var textFields = [UITextField]()
@@ -147,6 +149,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         counter = 0
         counter2 = 0
         counter3 = 0
+        counter4 = 0
     }
     
     @objc func labelTapped() {
@@ -213,24 +216,24 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.reloadData()
-
         Menuview.addSubview(collectionView)
         // Button titles and actions
-        let buttonTitles = ["Save", "Cancel","Table"]
-        let buttonColors: [UIColor] = [.systemBlue, .white, .white]
-        let buttonTitleColors: [UIColor] = [.white, .black, .black]
-        let buttonActions: [Selector] = [#selector(saveTapped), #selector(cancelTapped), #selector(tableTapped)]
+        let buttonTitles = ["Save", "Cancel","Table","Not Working?"]
+        let buttonColors: [UIColor] = [.systemBlue, .white, .white, .white]
+        let buttonTitleColors: [UIColor] = [.white, .black, .black, .black]
+        let buttonActions: [Selector] = [#selector(saveTapped), #selector(cancelTapped), #selector(tableTapped), #selector(emailTapped)]
 
         // Loop to create three buttons
         for (index, title) in buttonTitles.enumerated() {
-            let button = UIButton(frame: CGRect(x: 10 + index * 70, // Adjust x position for each button
+            let button = UIButton(frame: CGRect(x: 2 + index * 75, // Adjust x position for each button
                                                 y: 420,
-                                                width: 60, // Width of each button
+                                                width: 70, // Width of each button
                                                 height: 20))
             button.setTitle(title, for: .normal)
             button.backgroundColor = buttonColors[index] // Set color based on index
             button.setTitleColor(buttonTitleColors[index], for: .normal)
             button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 10)
+            button.titleLabel?.numberOfLines = 2
             button.layer.cornerRadius = 8
             button.addTarget(self, action: buttonActions[index], for: .touchUpInside)
             Menuview.addSubview(button) // Add each button to the menu
@@ -269,6 +272,7 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         textFields[0].text = ""
         textFields[1].text = ""
         textFields[2].text = ""
+        capturedImage = UIImage()
 
     }
 
@@ -279,8 +283,8 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
 
-    @objc func resetTapped() {
-        print("Reset button tapped")
+    @objc func emailTapped() {
+        print("Email button tapped")
     }
     
     @objc func tableTapped() {
@@ -309,6 +313,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             }
             let coreMLModel3 = try MLModel(contentsOf: modelURL3)
             self.model3 = try VNCoreMLModel(for: coreMLModel3)
+            guard let modelURL4 = Bundle.main.url(forResource: "forked", withExtension: "mlmodelc") else {
+                fatalError("Failed to find the model file.")
+            }
+            let coreMLModel4 = try MLModel(contentsOf: modelURL4)
+            self.model4 = try VNCoreMLModel(for: coreMLModel4)
             
         } catch {
             fatalError("Failed to load model: \(error.localizedDescription)")
@@ -351,7 +360,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
             print("Reached the limit3")
             return
         }
-        guard let ciImage = CIImage(image: image), let model = model, let model2 = model2, let model3 = model3 else {
+        if counter4 > maxLimit{
+            print("Reached the limit4")
+            return
+        }
+        guard let ciImage = CIImage(image: image), let model = model, let model2 = model2, let model3 = model3, let model4 = model4 else {
             fatalError("Unable to create CIImage from UIImage or model not loaded")
         }
         let handler = VNImageRequestHandler(ciImage: ciImage, options: [:])
@@ -393,6 +406,19 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         } catch {
             print("Failed to perform request: \(error.localizedDescription)")
         }
+        //
+//        let request4 = VNCoreMLRequest(model: model4) { request4, error in
+//            if let error = error {
+//                print("Failed to perform request: \(error.localizedDescription)")
+//                return
+//            }
+//            self.processResults4(request4.results, in: image)
+//        }
+//        do {
+//            try handler.perform([request4])
+//        } catch {
+//            print("Failed to perform request: \(error.localizedDescription)")
+//        }
     }
 
 
@@ -537,6 +563,52 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
         self.counter3 = maxLimit + 1
     }
+    //
+    func processResults4(_ results: [Any]?, in image: UIImage) {
+        guard let results = results as? [VNRecognizedObjectObservation] else {
+            print("No results or results are of unexpected type")
+            return
+        }
+
+        // Convert UIImage to CGImage
+        guard let cgImage = image.cgImage else { return }
+        //save image
+        for observation in results {
+            autoreleasepool {
+                let boundingBox = observation.boundingBox
+                let rect = CGRect(
+                    x: boundingBox.origin.x * image.size.width,
+                    y: (1 - boundingBox.origin.y - boundingBox.height) * image.size.height,
+                    width: boundingBox.width * image.size.width,
+                    height: boundingBox.height * image.size.height
+                )
+                // Crop the image using the rect
+                guard let croppedCGImage = cgImage.cropping(to: rect) else { return }
+                
+                // Convert cropped CGImage back to UIImage
+                let croppedImage = UIImage(cgImage: croppedCGImage)
+                if let label = observation.labels.first?.identifier {
+                    let image = croppedImage
+                    performOCR(on: image) { recognizedText in
+                        if let text = recognizedText {
+                            print("Key4:\(label),Value: \(text)")
+                            if label == "datestr"{
+//                                if self.filterDateWithSlashFormat(inputString: text.first ?? ""){
+//                                    if (self.dateSlashes.firstIndex(of: text.first!) == nil){
+//                                        self.dateSlashes.append(text.first!)
+//                                        self.datePool.append(text.first!)
+//                                    }
+//                                }
+                            }
+                        } else {
+                            print("No text recognized")
+                        }
+                    }
+                }
+            }
+        }
+        self.counter4 = maxLimit + 1
+    }
     
     @objc func imageSaved(_ image: UIImage, didFinishSavingWithError error: Error?, contextInfo: UnsafeRawPointer) {
         if let error = error {
@@ -671,23 +743,29 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
         }
         
         let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
-        guard let uiImage = convertCIImageToUIImage(ciImage: ciImage) else {
-            return
-        }
+        
         
         //Run prediction in background thread to avoid lag
         DispatchQueue.global(qos: .userInitiated).async {
-            self.predict(image: uiImage)
+            //store photos for email
+            if self.counter <= self.maxLimit{
+                autoreleasepool {
+                    guard var uiImage = self.convertCIImageToUIImage(ciImage: ciImage) else {
+                        return
+                    }
+                    self.capturedImage = uiImage
+                    self.predict(image: uiImage)
+                    uiImage = UIImage()
+                }
+            }
             let shopText = self.shopNames.first ?? "no shop"
             let dateText = self.dateSlashes.first ?? "no date"
             let totalText = self.totalValues.first ?? "no total"
             // Update UI on the main thread
             DispatchQueue.main.async {
                 self.bottomLabel.text = "\(shopText) \(",") \(dateText) \(",") \(totalText)"
-//                if self.maxLimit < self.counter{
-                    self.actionButton.setTitle("Retry", for: .normal)
-                    self.actionButton.isEnabled = true
-//                }
+                self.actionButton.setTitle("Retry", for: .normal)
+                self.actionButton.isEnabled = true
             }
         }
     }

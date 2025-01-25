@@ -95,10 +95,15 @@ class TableViewController: UIViewController,MFMailComposeViewControllerDelegate 
     
     @objc func button1Tapped() {
         print("Button 1 tapped")
-        let targetViewController = self.storyboard!.instantiateViewController( withIdentifier: "scanview" ) as! ViewController//Landscape
-        targetViewController.modalPresentationStyle = .fullScreen
-        targetViewController.repoDictionary = self.repoDictionary
-        self.present( targetViewController, animated: true, completion: nil)
+        if let presentingVC = presentingViewController as? ViewController {
+                presentingVC.repoDictionary = self.repoDictionary
+                dismiss(animated: true, completion: nil) // Return to the existing view
+        } else {
+            let targetViewController = storyboard!.instantiateViewController(withIdentifier: "scanview") as! ViewController
+            targetViewController.modalPresentationStyle = .fullScreen
+            targetViewController.repoDictionary = self.repoDictionary
+            present(targetViewController, animated: true, completion: nil)
+        }
     }
     
     @objc func button2Tapped() {
