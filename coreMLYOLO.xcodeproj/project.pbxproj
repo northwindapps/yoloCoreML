@@ -21,6 +21,7 @@
 		2BC7943F2C5534AA003998C8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2BC7943E2C5534AA003998C8 /* Assets.xcassets */; };
 		2BC794422C5534AA003998C8 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 2BC794412C5534AA003998C8 /* Base */; };
 		2BC794502C5551C9003998C8 /* billJP.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 2BC7944F2C5551C9003998C8 /* billJP.jpg */; };
+		2BCF9DD42D453FC500C05681 /* EmailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BCF9DD32D453FC500C05681 /* EmailViewController.swift */; };
 		2BF14A1F2D40852600C0EB83 /* forked.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2BF14A1E2D40852600C0EB83 /* forked.mlmodel */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 		2BC794412C5534AA003998C8 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2BC794432C5534AA003998C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2BC7944F2C5551C9003998C8 /* billJP.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = billJP.jpg; sourceTree = "<group>"; };
+		2BCF9DD32D453FC500C05681 /* EmailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailViewController.swift; sourceTree = "<group>"; };
 		2BF14A1E2D40852600C0EB83 /* forked.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = forked.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -77,6 +79,7 @@
 				2BC794352C5534A8003998C8 /* AppDelegate.swift */,
 				2BC794372C5534A8003998C8 /* SceneDelegate.swift */,
 				2BC794392C5534A8003998C8 /* ViewController.swift */,
+				2BCF9DD32D453FC500C05681 /* EmailViewController.swift */,
 				2BA80CD62D3BA3780060B4B8 /* TableViewController.swift */,
 				2BC7944F2C5551C9003998C8 /* billJP.jpg */,
 				2BC7943B2C5534A8003998C8 /* Main.storyboard */,
@@ -176,6 +179,7 @@
 				2B2BD6E92D38054A000FF3C0 /* shop_name.mlmodel in Sources */,
 				2B9497212D3A8AD100F5B99F /* Menu.swift in Sources */,
 				2BAEAD952D396A7C008180DB /* 50_date.mlmodel in Sources */,
+				2BCF9DD42D453FC500C05681 /* EmailViewController.swift in Sources */,
 				2BAEAD972D396D38008180DB /* date.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
