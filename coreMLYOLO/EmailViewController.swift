@@ -162,6 +162,7 @@ class EmailViewController: UIViewController,UITextFieldDelegate,MFMailComposeVie
             let mail = MFMailComposeViewController()
             mail.mailComposeDelegate = self
             mail.setSubject("from Total Tracker")
+            mail.setToRecipients(["totaltrackerapp@gmail.com"])
             
             // Convert capturedImage to Data
             let imageData = capturedImage.jpegData(compressionQuality: 1.0)
