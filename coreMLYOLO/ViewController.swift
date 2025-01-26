@@ -285,6 +285,11 @@ class ViewController: UIViewController, AVCaptureVideoDataOutputSampleBufferDele
 
     @objc func emailTapped() {
         print("Email button tapped")
+        print("Table button tapped")
+        let targetViewController = self.storyboard!.instantiateViewController( withIdentifier: "emailview" ) as! EmailViewController//Landscape
+        targetViewController.modalPresentationStyle = .fullScreen
+        targetViewController.capturedImage = self.capturedImage
+        self.present( targetViewController, animated: true, completion: nil)
     }
     
     @objc func tableTapped() {
